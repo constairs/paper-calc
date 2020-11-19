@@ -4,7 +4,7 @@
   export let addToFavorite;
   export let updateItem;
 
-  $: totalTons = Math.ceil(+item.listsCount * ((+item.itemDensity / 1000) * +item.itemSize));
+  $: totalTons = +item.listsCount * ((+item.itemDensity * +item.itemSize) / 1000000000);
 
   let desityLabels = {
     220: '0.22 кг/м2',
