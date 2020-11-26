@@ -4,7 +4,7 @@
   export let addToFavorite;
   export let updateItem;
 
-  $: totalTons = +item.listsCount * ((+item.itemDensity * +item.itemSize) / 10_000_000_000);
+  $: totalTons = parseFloat((+item.listsCount * (+item.itemDensity * +item.itemSize) / 10_000_000_000).toPrecision(4));
 
   let desityLabels = {
     220: '0.22 кг/м2',
@@ -115,14 +115,20 @@
 
 <style>
   .calc-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "a b c d";
+    grid-column-gap: 1rem;
 
-    padding: 30px 40px;
+    padding: 30px 20px;
     border-radius: 4px;
     background-color: #c5d2d5;
     margin-bottom: 20px;
+  }
+
+  fieldset {
+    margin: 0;
   }
 
   fieldset div {
@@ -146,7 +152,47 @@
   }
 
   .calc-item-field {
-    margin-right: 30px;
     min-width: 200px;
+  }
+
+  .calc-item-field:first-child {
+    grid-area: a;
+  }
+
+  .calc-item-field:nth-child(2) {
+    grid-area: b;
+  }
+
+  .calc-item-field:nth-child(3) {
+    grid-area: c;
+  }
+
+  .calc-item-field:nth-child(4) {
+    grid-area: d;
+  }
+
+  @media (max-width: 1100px) {
+    .calc-item {
+      grid-template-columns: 50% 50%;
+      grid-template-rows: 80px 1fr 200px;
+      grid-template-areas:  "a a"
+                            "b c"
+                            "d d";
+    }
+
+    .calc-item-field {
+      margin-bottom: 1rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .calc-item {
+      grid-template-columns: 50% 50%;
+      grid-template-rows: 100px 1fr 1fr 200px;
+      grid-template-areas:  "a a"
+                            "b b"
+                            "c c"
+                            "d d";
+    }
   }
 </style>

@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
   import Calc from './Calc.svelte';
   import * as animateScroll from 'svelte-scrollto';
+  import ArrLeft from './assets/arrLeft.svg';
+  import ArrRight from './assets/arrRight.svg';
   import { v4 as uuidv4 } from 'uuid';
 
   animateScroll.setGlobalOptions({
@@ -25,17 +27,20 @@
 
   const addToFavorite = (item) => {
     console.log(item);
-    if (!history.find(a => (a.id === item.id))) {
-      history = history.concat(item);
-      localStorage.setItem('history', JSON.stringify(history));
+    let hist = [];
+    if (!history.find(a => (a.totalTons === item.totalTons))) {
+      hist = history.concat(item);
+      history = hist;
+      localStorage.setItem('history', JSON.stringify(hist));
     } else {
-      history = history.map(a => (a.id === item.id ? item : a));
+      hist = history.map(a => (a.totalTons === item.totalTons ? item : a));
+      history = hist;
+      localStorage.setItem('history', JSON.stringify(hist));
     }
   };
 
-  const removeFromFavourite = (id) => {
-    console.log(id);
-    history = history.filter(a => (a.id !== id));
+  const removeFromFavourite = (totalTons) => {
+    history = history.filter(a => (a.totalTons !== totalTons));
     console.log(history);
 
     localStorage.setItem('history', JSON.stringify(history));
@@ -94,9 +99,9 @@
   <aside class={sidebarIsOpened ? 'opened' : ''}>
     <button class="switch-btn" on:click={openSidebar}>
       {#if !sidebarIsOpened}
-        open
+        <ArrLeft width="20" />
       {:else}
-        close
+        <ArrRight width="20" />
       {/if}
     </button>
     <h3>Избранное</h3>
@@ -122,7 +127,7 @@
             </button>
             <button
               on:click={() => {
-                removeFromFavourite(histItem.id);
+                removeFromFavourite(histItem.totalTons);
               }}
             >
               x
@@ -149,7 +154,7 @@
 	main {
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
+		min-width: 240px;
 		margin: 0 auto;
     overflow-y: auto;
     flex: 1 1 0;
@@ -166,9 +171,11 @@
   }
 
   .switch-btn {
+    max-width: 40px;
+    width: 100%;
     position: absolute;
     top: 0;
-    left: 0;
+    left: -40px;
     display: none;
   }
 
@@ -191,6 +198,7 @@
     position: fixed;
     left: 50%;
     bottom: 30px;
+    width: 10rem;
     transform: translateX(-50%);
   }
 
@@ -204,6 +212,7 @@
   .history-list {
     list-style-type: none;
     padding-left: 0;
+    overflow-y: auto;
   }
 
   .history-list li {
@@ -219,6 +228,8 @@
 
   @media (max-width: 1600px) {
     aside {
+      overflow-y: visible;
+      overflow-x: visible;
       position: fixed;
       right: 0;
       top: 0;
@@ -230,12 +241,34 @@
       transition: all .2s ease-in-out;
     }
 
+    aside h3 {
+      opacity: 0;
+      transition: all .15s ease-in;
+    }
+
     aside.opened {
       transform: translateX(0);
+      /* overflow-y: auto; */
+      /* overflow-x: visible; */
+    }
+
+    aside.opened h3 {
+      opacity: 100;
     }
 
     .switch-btn {
       display: block;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .main-heading .img {
+      width: 5rem;
+      height: 5rem;
+    }
+
+    h1 {
+      font-size: 2em;
     }
   }
 
@@ -244,4 +277,11 @@
 			max-width: none;
 		}
 	}
+
+  @media (max-width: 600px) {
+    aside {
+      max-width: 100vw;
+      width: 100%;
+    }
+  }
 </style>
